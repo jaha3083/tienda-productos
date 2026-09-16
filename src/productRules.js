@@ -1,7 +1,4 @@
 export function applyStockRule(product) {
-  if (product.price >= 100 && product.stock < 10) {
-    return { ...product, stock: 10 }
-  }
   return product
 }
 
