@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import './App.css'
-import { prepareProducts } from './productRules'
+import { isLowStock } from './productRules'
 
 function App() {
   const [products, setProducts] = useState([])
@@ -13,13 +13,13 @@ function App() {
         if (!response.ok) throw new Error('No se pudieron cargar los productos.')
         return response.json()
       })
-      .then((data) => setProducts(prepareProducts(data)))
+      .then((data) => setProducts(data))
       .catch((requestError) => setError(requestError.message))
       .finally(() => setLoading(false))
   }, [])
 
   const metrics = useMemo(() => ({
-    lowStock: products.filter((product) => product.price >= 100 && product.stock < 10).length,
+    lowStock: products.filter((product) => isLowStock(product)).length,
     value: products.reduce((total, product) => total + product.price * product.stock, 0),
   }), [products])
 
@@ -58,7 +58,7 @@ function App() {
     }
 
     return products.map((product) => {
-      const lowStock = product.price >= 100 && product.stock < 10
+      const lowStock = isLowStock(product)
 
       return (
         <tr key={product.id}>
